@@ -70,9 +70,10 @@ async def run_eval_for_task(client, task_id):
             rewards.append(reward)
             steps_taken = step
             log_step(step=step, action=str(action), reward=reward, done=done, error=None)
-            if done:
+        if done:
                 success = (reward >= 1.0)
-                score = 1.0 if success else max(rewards)
+                raw_score = 1.0 if success else max(rewards)
+                score = max(0.001, min(raw_score, 0.999))
                 break
     except Exception as e: print(f"[DEBUG] {task_id} failed: {e}")
     finally: log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
